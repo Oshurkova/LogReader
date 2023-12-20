@@ -5,8 +5,9 @@ regex_time = r"^\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}:\d{1,2}"
 regex_req = r"(?<=INFO -).+(?=\()"
 regex_data = r"(?<=\().+(?=\))"
 
-path_log = 'C:/work/logs/log26.09.2023.log'
-path_for_save = 'C:/work/logs/'
+#change ...your path...
+path_log = '...your path.../LogReader/logs/log26.09.2023.log'
+path_for_save = '...your path.../LogReader/logs/'
 
 log_reader.parse_data(
     regex_time,
