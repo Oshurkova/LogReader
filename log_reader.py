@@ -51,37 +51,29 @@ def parse_data(regex_time, regex_req, regex_data, path_log, path_for_save):
 
     requests_count = defaultdict(lambda: defaultdict(int))
 
-    #sort data
+    #Подготовка данных
+    requests_count = defaultdict(lambda: defaultdict(int))
     log_data.sort(key=lambda x: datetime.strptime(x[1], "%Y-%m-%d %H:%M:%S"))
     requests, timestamps = zip(*log_data)
     for request, timestamp in zip(requests, timestamps):
         requests_count[timestamp][request] += 1
     unique_requests = list(set(requests))
 
-    colors = ["#0000FF", "#008000", "#FF0000", "#00FFFF", "#FF00FF", "#FFFF00", "#000000", "#FFA07A"]
-
-    #create plot
-    plt.figure().set_figwidth(10)
+    #Создание графика
+    plt.figure(figsize=(10, 6))
     for i, request in enumerate(unique_requests):
-        counts = [requests_count[timestamp][request] 
-                  for timestamp in timestamps]
-        plt.plot(timestamps, 
-                 counts, 
-                 marker='', 
-                 linestyle='-', 
-                 label=request, 
-                 color=colors[i % 8], 
-                 linewidth=1)
+        times = [datetime.strptime(log[1], "%Y-%m-%d %H:%M:%S") 
+                for log in log_data if log[0] == request]
+        hours = [time.hour + time.minute / 60 for time in times]
+        plt.scatter(hours, [request] * len(hours), s=10)
 
-    plt.title("Количество каждого запроса в единицу времени")
-    plt.xlabel("Время")
-    plt.ylabel("Количество запросов")
+    plt.title("Зависимость времени запроса от типа запроса")
+    plt.xlabel("Время (часы)")
+    plt.ylabel("Тип запроса")
     plt.xticks(rotation=45)
     plt.grid(True)
-    plt.legend()
-
     plt.tight_layout()
-    plt.savefig(path_for_save + 'log_plot.png', bbox_inches='tight', dpi=100)
+    plt.savefig(path_for_save + 'scatter_plot.png', bbox_inches='tight', dpi=100)
 
     #csv -> excel
     read_file = pd.read_csv(path_for_save + csv_filename)
@@ -119,9 +111,9 @@ def parse_data(regex_time, regex_req, regex_data, path_log, path_for_save):
             
     ws = wb.create_sheet(title="График")
 
-    img = Image(path_for_save + 'log_plot.png')
+    img = Image(path_for_save + 'scatter_plot.png')
     ws.add_image(img, 'A1')
 
     wb.save(excel_file)
 
-    #plt.show()        
+    plt.show()
