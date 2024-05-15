@@ -39,7 +39,6 @@ def parse_data(regex_time, regex_req, regex_data, path_log, path_for_save):
                 continue
 
             try:
-                #to csv
                 data = [[req_time, req, req_data]]
                 csv_file = open(path_for_save + csv_filename, 'a')
                 with csv_file:
